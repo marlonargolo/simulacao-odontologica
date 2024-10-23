@@ -60,6 +60,8 @@
         <button onclick="rotate('x')">Rotação X</button>
         <button onclick="rotate('y')">Rotação Y</button>
         <button onclick="rotate('z')">Rotação Z</button><br><br>
+        <button id="releaseRestoration">Soltar Restauração</button>
+        <button id="resetTool">Resetar Ferramenta</button>
 
         <h4>Mouse Control:</h4>
         <button id="toggleMouseControl">Habilitar Controle por Mouse</button>
@@ -77,6 +79,9 @@
         let mouseControlEnabled = false;
         let cavityAttachedToTool = false;
         let restorationAttachedToTool = false;
+
+        // Posição inicial da ferramenta
+        const initialToolPosition = new THREE.Vector3(0, 0, -2);
 
         // Cena interativa
         const scene = new THREE.Scene();
@@ -115,7 +120,7 @@
         const toolMaterial = new THREE.MeshPhongMaterial({ color: 0x5555ff });
         const tool = new THREE.Mesh(toolGeometry, toolMaterial);
         tool.rotation.x = Math.PI / 2;
-        tool.position.set(0, 0, -2);
+        tool.position.copy(initialToolPosition);  // Use a posição inicial
         scene.add(tool);
 
         // Criar o pontinho preto (simulando uma cárie)
@@ -148,6 +153,9 @@
 
         animate();
 
+        // Defina um vetor de deslocamento para a ponta da ferramenta
+        const toolTipOffset = new THREE.Vector3(0, 0, -1); // Ajuste os valores conforme necessário
+
         // Função para detectar colisão entre ferramenta e cárie
         function checkToolCavityCollision() {
             const toolBoundingBox = new THREE.Box3().setFromObject(tool);
@@ -158,9 +166,9 @@
                 cavityAttachedToTool = true;
             }
 
-            // Se a cárie estiver em contato com a ferramenta, mova-a junto com a ferramenta
+            // Se a cárie estiver em contato com a ferramenta, mova-a junto com a ponta da ferramenta
             if (cavityAttachedToTool) {
-                cavity.position.copy(tool.position);
+                cavity.position.copy(tool.position).add(toolTipOffset);
             }
         }
 
@@ -174,9 +182,9 @@
                 restorationAttachedToTool = true;
             }
 
-            // Se a restauração estiver em contato com a ferramenta, mova-a junto com a ferramenta
+            // Se a restauração estiver em contato com a ferramenta, mova-a junto com a ponta da ferramenta
             if (restorationAttachedToTool) {
-                restoration.position.copy(tool.position);
+                restoration.position.copy(tool.position).add(toolTipOffset);
             }
         }
 
@@ -244,11 +252,24 @@
             }
         }
 
+        // Função para soltar a restauração e reposicionar a ferramenta
+        document.getElementById('releaseRestoration').addEventListener('click', function() {
+            restorationAttachedToTool = false; // Desvincula a restauração da ferramenta
+            tool.position.copy(initialToolPosition); // Restaura a posição inicial da ferramenta
+        });
+
         // Alternar controle do mouse
         document.getElementById('toggleMouseControl').addEventListener('click', function () {
             mouseControlEnabled = !mouseControlEnabled;
             controls.enabled = mouseControlEnabled;
             this.textContent = mouseControlEnabled ? 'Disable Mouse Control' : 'Enable Mouse Control';
+        });
+
+        // Função para resetar a posição da ferramenta
+        document.getElementById('resetTool').addEventListener('click', function() {
+            tool.position.copy(initialToolPosition); // Restaura a posição inicial da ferramenta
+            cavityAttachedToTool = false; // Desvincula a cárie da ferramenta
+            restorationAttachedToTool = false; // Desvincula a restauração da ferramenta
         });
     </script>
 </body>
