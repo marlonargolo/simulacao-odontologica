@@ -49,21 +49,21 @@
 
     // Iluminação frontal e lateral
     const lightLeft = new THREE.DirectionalLight(0xffffff, 1);
-    lightLeft.position.set(-2, 1, 2).normalize();
+    lightLeft.position.set(-2, 1, 2).normalize(); // Ajuste da posição para iluminar pela frente
     scene.add(lightLeft);
 
     const lightRight = new THREE.DirectionalLight(0xffffff, 1);
-    lightRight.position.set(2, 1, 2).normalize();
+    lightRight.position.set(2, 1, 2).normalize(); // Ajuste da posição para iluminar pela frente
     scene.add(lightRight);
 
     // Iluminação na parte de trás (suave)
     const lightBack = new THREE.DirectionalLight(0xffffff, 0.3);
-    lightBack.position.set(0, 2, -3).normalize();
+    lightBack.position.set(0, 2, -3).normalize(); // Iluminação suave na parte de trás
     scene.add(lightBack);
 
     // Adicionar luz de preenchimento ajustável pelo usuário
     const userLight = new THREE.DirectionalLight(0xffffff, 1);
-    userLight.position.set(0, 2, 3);
+    userLight.position.set(0, 2, 3); // Luz adicional para controle
     scene.add(userLight);
 
     // Loader para STL
@@ -76,17 +76,14 @@
     // Função para carregar um modelo STL
     function loadSTLModel(path, position, scale = 1, rotation = { x: 0, y: 0, z: 0 }) {
       stlLoader.load(path, (geometry) => {
-        console.log(`Modelo carregado: ${path}`); // Log para verificação do carregamento
-        const material = new THREE.MeshBasicMaterial({ color: 0x5555ff, wireframe: true }); // Material básico para visualização
+        const material = new THREE.MeshPhongMaterial({ color: 0x5555ff });
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.set(position.x, position.y, position.z);
         mesh.scale.set(scale, scale, scale);
-        mesh.rotation.set(rotation.x, rotation.y, rotation.z);
+        mesh.rotation.set(rotation.x, rotation.y, rotation.z); // Definir a rotação inicial
         scene.add(mesh);
         if (path.includes("stl/MandibularAnatomyNormalBite.stl")) jaw = mesh; // Se for a mandíbula
         if (path.includes("stl/MaxillaryAnatomy.stl")) maxilla = mesh; // Se for o maxilar
-      }, undefined, (error) => {
-        console.error(`Erro ao carregar ${path}:`, error); // Log de erro
       });
     }
 
