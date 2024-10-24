@@ -127,7 +127,7 @@
         const cavityGeometry = new THREE.SphereGeometry(0.1, 32, 32);
         const cavityMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
         const cavity = new THREE.Mesh(cavityGeometry, cavityMaterial);
-        cavity.position.set(0.5, -0.8, 0);  // Posiciona a cárie próxima ao dente
+        cavity.position.set(0, -0.9, 0.3);  // Posiciona a cárie próxima ao dente
         scene.add(cavity);
 
         // Criar o pontinho branco (simulando uma restauração)
@@ -257,7 +257,11 @@
             restorationAttachedToTool = false; // Desvincula a restauração da ferramenta
             tool.position.copy(initialToolPosition); // Restaura a posição inicial da ferramenta
         });
-
+        // Função para soltar a carie e reposicionar a ferramenta
+        document.getElementById('releaseRestoration').addEventListener('click', function() {
+            cavityAttachedToTool = false; // Desvincula a restauração da ferramenta
+            tool.position.copy(initialToolPosition); // Restaura a posição inicial da ferramenta
+        });
         // Alternar controle do mouse
         document.getElementById('toggleMouseControl').addEventListener('click', function () {
             mouseControlEnabled = !mouseControlEnabled;
